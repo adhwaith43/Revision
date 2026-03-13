@@ -67,11 +67,13 @@
 
 //// type coercion /////
 
+
+////// string to number
+
 // const x ="245"
 // const y =2
 
 // console.log(Number(x)+y)
-
 
 // const x ="245.34232 px"
 // const y =2
@@ -85,8 +87,23 @@
 // console.log(parseInt(x)+y)
 
 
+
+/////// string to number
+
 // const x ="245"
 // const y =2
 
-// console.log(Number(x)+y)
+// console.log(String(x)+y)
+
+
+// const x ="245"
+// const y =2
+
+// console.log(x.toString())
+
+
+// const x ="245"
+// const y =2
+
+// console.log(x + "")
 
