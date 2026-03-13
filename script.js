@@ -146,3 +146,12 @@
 // const arr2=Array.from("hello")
 // arr2[arr2.length + 5] = "test"
 // console.log(arr2)
+
+// arr2.pop() //removes the last element
+// arr2.push(2) //add as last element
+// arr2.shift() //removes the first element
+// arr2.unshift('new') //add to begining of the array
+// // console.log(arr2)
+//arr=[1,2,3,true]
+
+// const arr3 = arr.concat(arr2)
