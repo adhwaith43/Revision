@@ -128,3 +128,6 @@
 // console.log(true && "hello") //get what is on the right side
 ////if the condition is false display false
 
+
+// const cond= 2<3 ? "okay cool":"no"
+// console.log(cond)
