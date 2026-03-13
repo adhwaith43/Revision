@@ -165,4 +165,14 @@
 
 
 
+///// Array Destructuring //////
 
+// const [x,y]=[1,2]
+// console.log(x , y) // 1 2
+
+
+// const [x,y] =[1,2,3,4,5]
+// console.log(x,y) // 1 2
+
+// const [x,y] =[1,2,3,4,5]
+// console.log(x,y) // 1 2
