@@ -116,3 +116,14 @@
 
 
 // === strict equality operator
+// !== strict inequality operator
+
+
+// ///logical operators
+
+// console.log(true || false)
+// console.log("hello" || false) //hello---->kind of true
+// console.log("" || false) //get what is on the right side
+
+// console.log(true && "hello") //get what is on the right side
+////if the condition is false display false
