@@ -31,3 +31,13 @@
 
 
 // // Javasscript uses Camel case unlike python which uses snake case
+
+// var helloworld ="hello"
+// helloword='world'
+
+
+// let x =3
+
+// vat and let are block scoped
+
+// const velocity =34
