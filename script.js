@@ -37,7 +37,6 @@
 
 
 // let x =3
-
-// vat and let are block scoped
-
 // const velocity =34
+// const and let are block scoped
+// var-function scoped
