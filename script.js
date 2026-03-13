@@ -17,3 +17,13 @@
 
 // const v = prompt("type something")
 // console.log(v)
+
+// // Data types
+// String
+// Boolean
+// number
+// undefined
+// null 
+
+// // ; --> can be used to finish off a line
+// // Javascript has Automatic Semicolon Insertion (ASI)
