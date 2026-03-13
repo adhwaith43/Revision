@@ -129,5 +129,20 @@
 ////if the condition is false display false
 
 
+//// Ternary operator
 // const cond= 2<3 ? "okay cool":"no"
 // console.log(cond)
+
+
+// switch statement
+
+// const arr2=new Array(5)
+// console.log(arr2) //intialise array with 5 spaces
+
+// const arr2=Array.from("hello")
+// console.log(arr2)
+
+
+// const arr2=Array.from("hello")
+// arr2[arr2.length + 5] = "test"
+// console.log(arr2)
