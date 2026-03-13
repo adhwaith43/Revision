@@ -28,3 +28,6 @@
 
 // // ; --> can be used to finish off a line
 // // Javascript has Automatic Semicolon Insertion (ASI)
+
+
+// // Javasscript uses Camel case unlike python which uses snake case
