@@ -67,5 +67,26 @@
 
 //// type coercion /////
 
+// const x ="245"
+// const y =2
 
+// console.log(Number(x)+y)
+
+
+// const x ="245.34232 px"
+// const y =2
+
+// console.log(parseFloat(x)+y)
+
+
+// const x ="245.34232 px"
+// const y =2
+
+// console.log(parseInt(x)+y)
+
+
+// const x ="245"
+// const y =2
+
+// console.log(Number(x)+y)
 
