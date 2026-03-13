@@ -198,3 +198,21 @@
 // y.push("hello")  
 
 // console.log(x,y)  //[ 1, 2, 3, 4 ] [ 1, 2, 3, 4, 12, 2, 3, 4, 'hello' ]
+
+
+// for loop 
+
+///for loop for array 
+
+// const arr=[1,2,3,4]
+
+// for(let value of arr){
+//     console.log(value)
+// }
+
+
+// const arr=[6,7,2,3,4]
+
+// for(let [i,value] of arr.entries()){
+//     console.log(i,value)  /////for index and value and for arrays always use
+// }                         ///////////// 'for'  dont use 'in' 
