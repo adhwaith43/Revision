@@ -19,11 +19,12 @@
 // console.log(v)
 
 // // Data types
-// String
-// Boolean
-// number
-// undefined
-// null 
+// String --> "" '' ``
+// Boolean --> true false
+// number  --> 12.34 8 -9
+// undefined --> undefined
+// null -->used when you have explicitly set something to empty or non existing
+// bigint --> used to store big numbers that cant be stores in number types
 
 // // ; --> can be used to finish off a line
 // // Javascript has Automatic Semicolon Insertion (ASI)
