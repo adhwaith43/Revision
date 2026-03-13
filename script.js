@@ -152,6 +152,17 @@
 // arr2.shift() //removes the first element
 // arr2.unshift('new') //add to begining of the array
 // // console.log(arr2)
-//arr=[1,2,3,true]
 
-// const arr3 = arr.concat(arr2)
+
+// const arr=[1,2,3,true]
+
+// // const arr3 = arr.concat(arr2)
+
+// const arr3=arr.splice(1,2)
+// // const arr3=arr.slice(1,2)
+// console.log(arr3)
+// console.log(arr)
+
+
+
+
