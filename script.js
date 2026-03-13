@@ -127,3 +127,4 @@
 
 // console.log(true && "hello") //get what is on the right side
 ////if the condition is false display false
+
