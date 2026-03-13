@@ -45,4 +45,27 @@
 // variable hoisting for var
 
 
+// const x = 6
+// const y ="7"
+
+// console.log(x+y) ///67
+
+// const x = 6
+// const y =true
+
+// console.log(x+y) ///7 ////true==>1
+
+// const x = "hello"
+// const y = false
+
+// console.log(x+y) ///hellofalse
+
+// const x = "hello"
+// const y = 2
+
+// console.log(x+y) ///Nan
+
+//// type coercion /////
+
+
 
