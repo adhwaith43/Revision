@@ -177,3 +177,24 @@
 
 // const [x,... y] =[1,2,3,4,5] ///spread syntax
 // console.log(x,y) 
+
+
+// const x=[1,2,3,4]
+// const y=x
+// y.push("hello")
+
+// console.log(x,y) ///[ 1, 2, 3, 4, 'hello' ] [ 1, 2, 3, 4, 'hello' ]
+
+
+// const x=[1,2,3,4]
+// const y=[...x]
+// y.push("hello") 
+
+// console.log(x,y)  ////[ 1, 2, 3, 4 ] [ 1, 2, 3, 4, 'hello' ] 
+
+
+// const x=[1,2,3,4]
+// const y=[...x,12,2,3,4]
+// y.push("hello")  
+
+// console.log(x,y)  //[ 1, 2, 3, 4 ] [ 1, 2, 3, 4, 12, 2, 3, 4, 'hello' ]
