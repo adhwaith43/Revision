@@ -1,120 +1,118 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { use, useState } from 'react'
+import Search from './components/Search'
+import { useEffect } from 'react';
+
 import './App.css'
+import Spinner from './components/Spinner';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('');///searching
+
+  const [errorMessage, setErrorMessage] = useState('');///error handling
+  
+  const[movieList, setMovieList] = useState([]); /// state to store the fetched movies 
+  
+  const [isLoading, setIsLoading] = useState(true); /// state to track loading status of the API request
+
+
+
+  ///API configuration /////
+  const API_BASE_URL = 'https://api.themoviedb.org/3';
+  const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+  const API_OPTIONS = {
+    method: 'GET',
+    headers: { accept: 'application/json' ,
+    Authorization: `Bearer ${API_KEY}`
+    }
+  };
+
+  /////////////////////
+ 
+
+
+  ///function to fetch movies from the API//////
+  const fetchMovies = async () => {
+
+    setErrorMessage(''); /// Clear any previous error messages before fetching new movies
+    setIsLoading(true); /// Set loading state to true when starting to fetch movies
+
+    try {
+       const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+       const response = await fetch(endpoint, API_OPTIONS);
+
+
+       if (!response.ok) {
+        throw new Error(`failed to fetch movies`);
+      }
+
+        const data = await response.json();
+        if(data.Response === 'False') {
+
+          setErrorMessage(data.Error || 'No movies found.'); ///someimes the API might return a response with an error message
+          //, so we check for that and set it as the error message if it exists. Otherwise, we set a generic error message.
+
+          setMovieList([]); /// Clear the movie list if there was an error fetching movies
+          return;
+         }
+
+         setMovieList(data.results); /// if no error , update the movie list
+     }
+
+      catch (error) {
+        console.error('Error fetching movies:', error);
+        setErrorMessage('Failed to fetch movies. Please try again later.');
+      }
+
+
+      finally {
+        setIsLoading(false); /// Set loading state to false after the API request is complete, regardless of success or failure
+      }
+
+    }
+  ////////////////////////////
+
+
+
+  ///useEffect to fetch movies when the component mounts//////
+  useEffect(() => {
+    fetchMovies();
+                    }, []);
+
+  ////////////////////////////////
+
+
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main>
+      <div className='pattern'/>
+      <div className='wrapper'>
+        <header>
+          <img src="./hero.png" alt="Hero Banner" />
+          <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
+          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </header>
 
-      <div className="ticks"></div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <section className='all-movies'>
+          <h2 className='mt-[40px]'>All Movies</h2>
+          {isLoading ? (
+            <Spinner />
+          ) :errorMessage ? (
+            <p className="text-red-500">{errorMessage}</p>
+          ) : (
+            <ul>
+              {movieList.map((movie) => (
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+                <p key={movie.id} className='text-white'>{movie.title}</p>
+
+              ))}
+            </ul>
+          )}
+
+        </section>
+      </div>
+
+    </main>
   )
 }
 

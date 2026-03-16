@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/adhwaith43/Revision#readme",
   "dependencies": {
-    "prompt-sync": "^4.2.0"
+    "@tailwindcss/vite": "^4.2.1",
+    "prompt-sync": "^4.2.0",
+    "tailwindcss": "^4.2.1"
   }
 }
