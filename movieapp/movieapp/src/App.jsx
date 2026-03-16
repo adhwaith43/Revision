@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import './App.css'
 import Spinner from './components/Spinner';
+import { MovieCard } from './components/MovieCard';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');///searching
@@ -21,8 +22,9 @@ function App() {
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const API_OPTIONS = {
     method: 'GET',
-    headers: { accept: 'application/json' ,
-    Authorization: `Bearer ${API_KEY}`
+    headers: { 
+      'accept': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
     }
   };
 
@@ -31,13 +33,18 @@ function App() {
 
 
   ///function to fetch movies from the API//////
-  const fetchMovies = async () => {
+  const fetchMovies = async (query='') => {
 
     setErrorMessage(''); /// Clear any previous error messages before fetching new movies
     setIsLoading(true); /// Set loading state to true when starting to fetch movies
 
     try {
-       const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+       const endpoint = query
+       ?`${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+       :`${API_BASE_URL}/discover/movie?sort_by=popularity.desc` ; /// if there is a search term, use the search endpoint, otherwise use the discover endpoint to get popular movies
+       //////converted to utf-8 to make sure the query is processd properly 
+
+
        const response = await fetch(endpoint, API_OPTIONS);
 
 
@@ -75,8 +82,8 @@ function App() {
 
   ///useEffect to fetch movies when the component mounts//////
   useEffect(() => {
-    fetchMovies();
-                    }, []);
+    fetchMovies(searchTerm);
+                    }, [searchTerm]);
 
   ////////////////////////////////
 

@@ -29,8 +29,9 @@ export const MovieCard = ({ movie :
                         <p className='lang'>{original_language}</p>
 
                         <span>•</span>
-                        <p className='year'>{release_date? release_date.split('-')[0] : 'N/A'}</p> /// Extracting year from release date, if available, otherwise display 'N/A'
-
+                        <p className='year'>{release_date? release_date.split('-')[0] : 'N/A'}</p>
+                        {/*  Extracting year from release date, if available, otherwise display 'N/A' */}
+                        
                     </div>
                 </div>
             </div>
