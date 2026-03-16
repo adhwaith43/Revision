@@ -14,7 +14,6 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');///error handling
   
   const[movieList, setMovieList] = useState([]); /// state to store the fetched movies 
-  
   const [isLoading, setIsLoading] = useState(true); /// state to track loading status of the API request
 
   const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
@@ -100,6 +99,42 @@ function App() {
     setIsTopRatedLoading(true); /// Set loading state to true when starting to fetch top rated movies
   
     try {
+       const endpoint =`${API_BASE_URL}/movie/top_rated` ; /// endpoint to fetch top rated movies
+
+       const response = await fetch(endpoint, API_OPTIONS);
+
+
+       if (!response.ok) {
+        throw new Error(`failed to fetch movies`);
+      }
+
+        const data = await response.json();
+        if(data.Response === 'False') {
+
+          setErrorMessage(data.Error || 'No movies found.'); ///someimes the API might return a response with an error message
+          //, so we check for that and set it as the error message if it exists. Otherwise, we set a generic error message.
+
+          setTopRatedMovies([]); /// Clear the movie list if there was an error fetching movies
+          return;
+         }
+
+         setTopRatedMovies(data.results); /// if no error , update the movie list
+     }
+
+      catch (error) {
+        console.error('Error fetching movies:', error);
+        setErrorMessage('Failed to fetch movies. Please try again later.');
+      }
+
+
+      finally {
+        setIsTopRatedLoading(false); /// Set loading state to false after the API request is complete, regardless of success or failure
+      }
+
+    }
+  ////////////////////////////
+
+
 
   ///useEffect to fetch movies when the component mounts//////
   useEffect(() => {
