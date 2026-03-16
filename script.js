@@ -200,6 +200,7 @@
 // console.log(x,y)  //[ 1, 2, 3, 4 ] [ 1, 2, 3, 4, 12, 2, 3, 4, 'hello' ]
 
 
+
 // for loop 
 
 ///for loop for array 
@@ -211,8 +212,46 @@
 // }
 
 
+
 // const arr=[6,7,2,3,4]
 
 // for(let [i,value] of arr.entries()){
 //     console.log(i,value)  /////for index and value and for arrays always use
 // }                         ///////////// 'for'  dont use 'in' 
+
+
+
+/////////////  objects  //////////
+
+const obj={
+     name:"Alice",
+     age:23,
+     sayhello: function(){
+        return "hello"
+     },
+     career:{
+        
+     }
+}
+
+// obj.age="tim"
+
+// //////new property ///
+// obj.newProp=[1,2]
+
+// console.log(obj['name'])
+
+// ////delete/////
+// delete obj["career"]
+
+// ////keys and values////
+// console.log(Object.values(obj))
+// console.log(Object.keys(obj))
+
+
+// looping through keys
+for (let i in obj){
+    console.log(i)
+}
+
+///51.17
