@@ -19,6 +19,10 @@ function App() {
 
   const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
 
+  //top rated ..list and loading state
+  const [topRatedMovies, setTopRatedMovies] = useState([]);
+  const [isTopRatedLoading, setIsTopRatedLoading] = useState(true);
+
   
   ////////debounce///////
 
@@ -91,6 +95,11 @@ function App() {
   ////////////////////////////
 
 
+  ///////function to fetch top rated movies//////
+  const fetchTopRatedMovies = async () => {
+    setIsTopRatedLoading(true); /// Set loading state to true when starting to fetch top rated movies
+  
+    try {
 
   ///useEffect to fetch movies when the component mounts//////
   useEffect(() => {
