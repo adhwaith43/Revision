@@ -23,6 +23,12 @@ function App() {
   const [isTopRatedLoading, setIsTopRatedLoading] = useState(true);
 
   
+
+  // const [mediaType, setMediaType] = useState('movie'); // 'movie' or 'tv'
+  // ///variable to check the media type
+
+
+
   ////////debounce///////
 
   useDebounce(() => {
