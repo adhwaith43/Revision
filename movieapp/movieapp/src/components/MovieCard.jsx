@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const MovieCard = () => {
+export const MovieCard = ({ movie }) => {
   return (
-    <div>MovieCard</div>
+     <p key={movie.id} className='text-white'>{movie.title}</p>
   )
 }

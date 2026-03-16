@@ -89,7 +89,7 @@ function App() {
         <header>
           <img src="./hero.png" alt="Hero Banner" />
           <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
-          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> 
         </header>
 
 
@@ -103,7 +103,7 @@ function App() {
             <ul>
               {movieList.map((movie) => (
 
-                <p key={movie.id} className='text-white'>{movie.title}</p>
+               <MovieCard key={movie.id} movie={movie} />
 
               ))}
             </ul>
