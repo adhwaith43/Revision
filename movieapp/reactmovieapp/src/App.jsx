@@ -163,7 +163,7 @@ function App() {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> 
         </header>
          
-
+        {!searchTerm &&(
         <section className='trending'>
           <h2>Top Rated Movies</h2>
           
@@ -183,9 +183,8 @@ function App() {
             </ul>
           )}
         </section>
+        )}
         
-
-
 
 
         <section className='all-movies'>

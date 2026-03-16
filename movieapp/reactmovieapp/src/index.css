@@ -63,11 +63,17 @@
     @apply mt-20;
 
     & ul {
-      @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
+      /* 1. Change hide-scrollbar to custom-scrollbar */
+      /* 2. Added pb-5 to make room for the bar */
+      @apply flex flex-row overflow-x-auto gap-5 -mt-10 w-full custom-scrollbar pb-5;
+      
+      scroll-snap-type: x mandatory;
     }
 
     & ul li {
-      @apply min-w-[230px] flex flex-row items-center;
+      /* 3. Ensure items stay at their minimum width and don't shrink */
+      @apply min-w-[230px] flex flex-row items-center flex-shrink-0;
+      scroll-snap-align: start;
     }
 
     & ul li p {
@@ -96,7 +102,7 @@
   }
 
   .all-movies {
-    @apply space-y-9;
+    @apply space-y-9 mt-16;
 
     & ul {
       @apply grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
@@ -160,5 +166,23 @@
 
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+
+@utility custom-scrollbar {
+  /* Set the height of the horizontal scrollbar */
+  &::-webkit-scrollbar {
+    height: 8px; 
+  }
+
+  /* The background of the scrollbar track */
+  &::-webkit-scrollbar-track {
+    @apply bg-primary rounded-full;
+  }
+
+  /* The actual draggable handle */
+  &::-webkit-scrollbar-thumb {
+    @apply bg-light-200/20 rounded-full hover:bg-light-200/40 transition-colors;
   }
 }
