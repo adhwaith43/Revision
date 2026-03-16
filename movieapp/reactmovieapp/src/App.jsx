@@ -108,17 +108,17 @@ function App() {
         throw new Error(`failed to fetch movies`);
       }
 
-        const data = await response.json();
-        if(data.Response === 'False') {
+        const movies = await response.json();
+        if(movies.Response === 'False') {
 
-          setErrorMessage(data.Error || 'No movies found.'); ///someimes the API might return a response with an error message
+          setErrorMessage(movies.Error || 'No movies found.'); ///someimes the API might return a response with an error message
           //, so we check for that and set it as the error message if it exists. Otherwise, we set a generic error message.
 
           setTopRatedMovies([]); /// Clear the movie list if there was an error fetching movies
           return;
          }
 
-         setTopRatedMovies(data.results); /// if no error , update the movie list
+         setTopRatedMovies(movies.results); /// if no error , update the movie list
      }
 
       catch (error) {
@@ -144,6 +144,14 @@ function App() {
   ////////////////////////////////
 
 
+  ///useEffect to fetch top rated when the component mounts//////
+  useEffect(() => {
+    fetchTopRatedMovies();
+                    }, []);
+
+  ////////////////////////////////
+
+
 
   return (
     <main>
@@ -154,10 +162,34 @@ function App() {
           <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> 
         </header>
+         
+
+        <section className='trending'>
+          <h2>Top Rated Movies</h2>
+          
+          {isTopRatedLoading ? (
+            <Spinner />
+          ) : (
+            <ul>
+              {topRatedMovies.map((movie, index) => (
+                <li key={movie.id}> 
+                  <p>{index + 1}</p>
+                  <img 
+                    src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} 
+                    alt={movie.title} 
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+        
+
+
 
 
         <section className='all-movies'>
-          <h2 className='mt-[40px]'>All Movies</h2>
+          <h2>All Movies</h2>
           {isLoading ? (
             <Spinner />
           ) :errorMessage ? (
