@@ -1,6 +1,8 @@
 import { use, useState } from 'react'
 import Search from './components/Search'
 import { useEffect } from 'react';
+import {useDebounce} from 'react-use';
+
 
 import './App.css'
 import Spinner from './components/Spinner';
@@ -15,6 +17,16 @@ function App() {
   
   const [isLoading, setIsLoading] = useState(true); /// state to track loading status of the API request
 
+  const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
+
+  
+  ////////debounce///////
+
+  useDebounce(() => {
+    setDebouncedSearchTerm(searchTerm);
+  }, 500, [searchTerm]); ///500-delay in ms , //searchTerm is dependency
+  
+  ///////////////////////
 
 
   ///API configuration /////
@@ -82,8 +94,8 @@ function App() {
 
   ///useEffect to fetch movies when the component mounts//////
   useEffect(() => {
-    fetchMovies(searchTerm);
-                    }, [searchTerm]);
+    fetchMovies(debouncedSearchTerm);
+                    }, [debouncedSearchTerm]);
 
   ////////////////////////////////
 
