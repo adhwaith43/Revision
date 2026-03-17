@@ -5,7 +5,7 @@ const App = () =>
   return (
     <div>
       <div>App</div>
-      <Counter></Counter>
+      <Counter />
     </div>
   )
 }
