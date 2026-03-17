@@ -1,9 +1,15 @@
 import React from 'react'
+// Inside MovieCard.jsx
 
-export const MovieCard = ({ movie :
-    {title,vote_average,poster_path,release_date,original_language} 
-     }) => { //destructuring for better use
+
+export const MovieCard = ({ movie: { title, name, vote_average, poster_path, release_date, first_air_date, original_language } 
+  }) => { //destructuring for better use
   
+  
+    // Fallbacks: If 'title' doesn't exist, use 'name'. Same for the dates.
+    const displayTitle = title || name;
+    const displayDate = release_date || first_air_date;
+        
         return (
             <div className='movie-card'>
 
@@ -11,12 +17,12 @@ export const MovieCard = ({ movie :
                  src={poster_path ?
 
                     `https://image.tmdb.org/t/p/w500${poster_path}` :'/no-movie.png' }
-                    alt={title}
+                    alt={displayTitle}
                 />
 
                 <div className='mt-4'>
 
-                    <h3>{title}</h3>
+                    <h3>{displayTitle}</h3>
 
                     <div className='content'>
 
@@ -29,7 +35,7 @@ export const MovieCard = ({ movie :
                         <p className='lang'>{original_language}</p>
 
                         <span>•</span>
-                        <p className='year'>{release_date? release_date.split('-')[0] : 'N/A'}</p>
+                        <p className='year'>{displayDate? displayDate.split('-')[0] : 'N/A'}</p>
                         {/*  Extracting year from release date, if available, otherwise display 'N/A' */}
                         
                     </div>

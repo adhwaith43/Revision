@@ -186,3 +186,46 @@
     @apply bg-light-200/20 rounded-full hover:bg-light-200/40 transition-colors;
   }
 }
+
+/* for theme change */
+
+.theme-tv {
+  --color-primary: #170202; 
+  --color-light-100: #fbcECE; 
+  --color-light-200: #dbA8A8; 
+  --color-dark-100: #260A0A; 
+  --background-image-hero-pattern: url("/hero-bg-tv.png");
+}
+
+.theme-tv .text-gradient {
+  @apply bg-linear-to-r from-[#ffcfcf] to-[#ff5c5c] bg-clip-text text-transparent;
+}
+
+/* Add this at the VERY BOTTOM of your App.css file */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* bit more dealyed loading of the bg image on shifting the theme */
+
+@keyframes delayedFade {
+  0% { opacity: 0; }
+  40% { opacity: 0; } /* The image stays invisible for the first 40% of the animation */
+  100% { opacity: 1; }
+}
+
+.animate-delayed-fade {
+  /* 0.8s total duration. Adjust this number to make it slower or faster! */
+  animation: delayedFade 0.8s ease-in forwards;
+}

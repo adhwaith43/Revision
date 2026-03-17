@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Search = ({ searchTerm, setSearchTerm }) => { //{}-->destructuring props
+const Search = ({ searchTerm, setSearchTerm , mediaType }) => { //{}-->destructuring props
   return (
     <div className="search">
       <div>
@@ -8,7 +8,7 @@ const Search = ({ searchTerm, setSearchTerm }) => { //{}-->destructuring props
 
         <input
           type="text"
-          placeholder="Search through thousands of movies"
+          placeholder={`Search through thousands of ${mediaType === 'movie' ? 'movies' : 'TV shows'}`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

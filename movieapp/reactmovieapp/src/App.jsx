@@ -24,8 +24,8 @@ function App() {
 
   
 
-  // const [mediaType, setMediaType] = useState('movie'); // 'movie' or 'tv'
-  // ///variable to check the media type
+ // NEW: State to track if we are looking at movies or tv
+  const [mediaType, setMediaType] = useState('movie');
 
 
 
@@ -60,9 +60,9 @@ function App() {
     setIsLoading(true); /// Set loading state to true when starting to fetch movies
 
     try {
-       const endpoint = query
-       ?`${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-       :`${API_BASE_URL}/discover/movie?sort_by=popularity.desc` ; /// if there is a search term, use the search endpoint, otherwise use the discover endpoint to get popular movies
+       const endpoint = query 
+        ?`${API_BASE_URL}/search/${mediaType}?query=${encodeURIComponent(query)}`
+        : `${API_BASE_URL}/discover/${mediaType}?sort_by=popularity.desc`; /// if there is a search term, use the search endpoint, otherwise use the discover endpoint to get popular movies
        //////converted to utf-8 to make sure the query is processd properly 
 
 
@@ -105,7 +105,8 @@ function App() {
     setIsTopRatedLoading(true); /// Set loading state to true when starting to fetch top rated movies
   
     try {
-       const endpoint =`${API_BASE_URL}/movie/top_rated` ; /// endpoint to fetch top rated movies
+
+      const endpoint = `${API_BASE_URL}/${mediaType}/top_rated`; /// endpoint to fetch top rated movies/tv shows
 
        const response = await fetch(endpoint, API_OPTIONS);
 
@@ -145,7 +146,7 @@ function App() {
   ///useEffect to fetch movies when the component mounts//////
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
-                    }, [debouncedSearchTerm]);
+                    }, [debouncedSearchTerm,mediaType]);
 
   ////////////////////////////////
 
@@ -153,65 +154,89 @@ function App() {
   ///useEffect to fetch top rated when the component mounts//////
   useEffect(() => {
     fetchTopRatedMovies();
-                    }, []);
+                    }, [mediaType]);
 
   ////////////////////////////////
 
 
 
   return (
-    <main>
+    // The main wrapper handles the smooth blue-to-red color transition
+    <main className={`min-h-screen relative transition-colors duration-700 ease-in-out ${mediaType === 'tv' ? 'theme-tv' : ''}`}>
       <div className='pattern'/>
       <div className='wrapper'>
         <header>
-          <img src="./hero.png" alt="Hero Banner" />
-          <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
-          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> 
-        </header>
-         
-        {!searchTerm &&(
-        <section className='trending'>
-          <h2>Top Rated Movies</h2>
+
+          <img src={mediaType === 'movie' ? './hero.png' : './hero-tv.png'} alt="Hero Banner" />
           
-          {isTopRatedLoading ? (
-            <Spinner />
-          ) : (
-            <ul>
-              {topRatedMovies.map((movie, index) => (
-                <li key={movie.id}> 
-                  <p>{index + 1}</p>
-                  <img 
-                    src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} 
-                    alt={movie.title} 
-                  />
-                </li>
-              ))}
-            </ul>
+          {/* Dynamic Title Changes based on mediaType */}
+          <h1>Find <span className="text-gradient">{mediaType === 'movie' ? 'Movies' : 'TV Shows'}</span> You'll Enjoy Without the Hassle</h1>
+          
+          {/* Explicit Toggle Buttons */}
+          <div className="flex flex-row justify-center gap-5 mt-8 mb-4 bg-dark-100 p-2 rounded-xl max-w-fit mx-auto transition-colors duration-700 z-50 relative">
+            <button 
+              onClick={() => setMediaType('movie')}
+              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'movie' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
+            >
+              Movies
+            </button>
+            <button 
+              onClick={() => setMediaType('tv')}
+              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'tv' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
+            >
+              TV Shows
+            </button>
+          </div>
+
+          <Search 
+          searchTerm={searchTerm} 
+          setSearchTerm={setSearchTerm}
+          mediaType={mediaType} /> 
+
+        </header>
+
+        {/* The Animated Wrapper: Changing the key forces React to replay the slide animation */}
+        <div key={mediaType} className="animate-slide-in-right">
+          
+          {/* Only show Top Rated if there is NO search term */}
+          {!searchTerm && (
+            <section className='trending'>
+              <h2>Top Rated {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
+              {isTopRatedLoading ? (
+                <Spinner />
+              ) : (
+                <ul>
+                  {topRatedMovies.map((movie, index) => (
+                    <li key={movie.id}> 
+                      <p>{index + 1}</p>
+                      <img 
+                        src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} 
+                        alt={movie.title || movie.name} 
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           )}
-        </section>
-        )}
-        
 
+          <section className='all-movies'>
+            <h2>All {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
+            {isLoading ? (
+              <Spinner />
+            ) : errorMessage ? (
+              <p className="text-red-500">{errorMessage}</p>
+            ) : (
+              <ul>
+                {movieList.map((movie) => (
+                 <MovieCard key={movie.id} movie={movie} />
+                ))}
+              </ul>
+            )}
+          </section>
 
-        <section className='all-movies'>
-          <h2>All Movies</h2>
-          {isLoading ? (
-            <Spinner />
-          ) :errorMessage ? (
-            <p className="text-red-500">{errorMessage}</p>
-          ) : (
-            <ul>
-              {movieList.map((movie) => (
-
-               <MovieCard key={movie.id} movie={movie} />
-
-              ))}
-            </ul>
-          )}
-
-        </section>
+        </div>
       </div>
-
     </main>
   )
 }
