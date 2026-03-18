@@ -3,17 +3,30 @@ import Search from './components/Search'
 import { useEffect } from 'react';
 import {useDebounce} from 'react-use';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setReduxMovieList } from './store/movieSlice';
+
 
 import './App.css'
+import DetailPage from './components/DetailPage';
 import Spinner from './components/Spinner';
 import { MovieCard } from './components/MovieCard';
+
+
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');///searching
 
   const [errorMessage, setErrorMessage] = useState('');///error handling
   
-  const[movieList, setMovieList] = useState([]); /// state to store the fetched movies 
+  /////const[movieList, setMovieList] = useState([]); /// state to store the fetched movies 
+
+
+  const dispatch = useDispatch();
+  // grab the movieList from state.movies /////
+  const movieList = useSelector((state) => state.movies.movieList);
+
+
   const [isLoading, setIsLoading] = useState(true); /// state to track loading status of the API request
 
   const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
@@ -28,6 +41,8 @@ function App() {
   const [mediaType, setMediaType] = useState('movie');
 
 
+// Tracks the clicked movie/tv show //
+  const [selectedItem, setSelectedItem] = useState(null); 
 
   ////////debounce///////
 
@@ -79,11 +94,16 @@ function App() {
           setErrorMessage(data.Error || 'No movies found.'); ///someimes the API might return a response with an error message
           //, so we check for that and set it as the error message if it exists. Otherwise, we set a generic error message.
 
-          setMovieList([]); /// Clear the movie list if there was an error fetching movies
+          // setMovieList([]); /// Clear the movie list if there was an error fetching movies
+
+          dispatch(setReduxMovieList([])); // NEW REDUX WAY
+
           return;
          }
 
-         setMovieList(data.results); /// if no error , update the movie list
+        //  setMovieList(data.results); /// if no error , update the movie list
+        dispatch(setReduxMovieList(data.results)); // NEW REDUX WAY
+        
      }
 
       catch (error) {
@@ -163,79 +183,108 @@ function App() {
   return (
     // The main wrapper handles the smooth blue-to-red color transition
     <main className={`min-h-screen relative transition-colors duration-700 ease-in-out ${mediaType === 'tv' ? 'theme-tv' : ''}`}>
-      <div className='pattern'/>
-      <div className='wrapper'>
-        <header>
+      
+      {/* NEW CHANGE: Replaced the plain <div className='pattern'/> with this dynamic background swapper */}
+      <div className={`pattern transition-all duration-700 absolute inset-0 z-0 ${mediaType === 'tv' ? 'bg-[url("/hero-bg-tv.png")]' : ''}`} />
 
-          <img src={mediaType === 'movie' ? './hero.png' : './hero-tv.png'} alt="Hero Banner" />
-          
-          {/* Dynamic Title Changes based on mediaType */}
-          <h1>Find <span className="text-gradient">{mediaType === 'movie' ? 'Movies' : 'TV Shows'}</span> You'll Enjoy Without the Hassle</h1>
-          
-          {/* Explicit Toggle Buttons */}
-          <div className="flex flex-row justify-center gap-5 mt-8 mb-4 bg-dark-100 p-2 rounded-xl max-w-fit mx-auto transition-colors duration-700 z-50 relative">
-            <button 
-              onClick={() => setMediaType('movie')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'movie' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
-            >
-              Movies
-            </button>
-            <button 
-              onClick={() => setMediaType('tv')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'tv' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
-            >
-              TV Shows
-            </button>
-          </div>
+      {/* NEW CHANGE: Added relative positioning and z-index so content sits above the new background */}
+      <div className='wrapper relative z-10 pt-10'>
+        
+        {/* NEW CHANGE: THE LOGIC GATE! If selectedItem is true, show DetailPage. If false, show the rest of the app */}
+        {selectedItem ? (
+          <DetailPage 
+            item={selectedItem} 
+            mediaType={mediaType} 
+            onBack={() => setSelectedItem(null)} 
+          />
+        ) : (
+          <> {/* NEW CHANGE: React fragment wraps your original UI so it can exist inside the "else" part of the logic gate */}
+            <header>
 
-          <Search 
-          searchTerm={searchTerm} 
-          setSearchTerm={setSearchTerm}
-          mediaType={mediaType} /> 
+              {/* NEW CHANGE: Added a key so React knows to reload it, fixed the height/object-contain, and added the delayed fade animation */}
+              <img 
+                key={mediaType}
+                src={mediaType === 'movie' ? './hero.png' : './hero-tv.png'} 
+                alt="Hero Banner" 
+                className="w-[400px] h-auto object-contain mx-auto drop-shadow-md animate-delayed-fade"
+              />
+              
+              {/* Dynamic Title Changes based on mediaType */}
+              <h1>Find <span className="text-gradient">{mediaType === 'movie' ? 'Movies' : 'TV Shows'}</span> You'll Enjoy Without the Hassle</h1>
+              
+              {/* Explicit Toggle Buttons */}
+              <div className="flex flex-row justify-center gap-5 mt-8 mb-4 bg-dark-100 p-2 rounded-xl max-w-fit mx-auto transition-colors duration-700 z-50 relative">
+                <button 
+                  onClick={() => setMediaType('movie')}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'movie' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
+                >
+                  Movies
+                </button>
+                <button 
+                  onClick={() => setMediaType('tv')}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${mediaType === 'tv' ? 'bg-light-100/20 text-white shadow-sm' : 'text-gray-100 hover:text-white'}`}
+                >
+                  TV Shows
+                </button>
+              </div>
 
-        </header>
+              <Search 
+                searchTerm={searchTerm} 
+                setSearchTerm={setSearchTerm}
+                mediaType={mediaType} 
+              /> 
 
-        {/* The Animated Wrapper: Changing the key forces React to replay the slide animation */}
-        <div key={mediaType} className="animate-slide-in-right">
-          
-          {/* Only show Top Rated if there is NO search term */}
-          {!searchTerm && (
-            <section className='trending'>
-              <h2>Top Rated {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
-              {isTopRatedLoading ? (
-                <Spinner />
-              ) : (
-                <ul>
-                  {topRatedMovies.map((movie, index) => (
-                    <li key={movie.id}> 
-                      <p>{index + 1}</p>
-                      <img 
-                        src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} 
-                        alt={movie.title || movie.name} 
-                      />
-                    </li>
-                  ))}
-                </ul>
+            </header>
+
+            {/* The Animated Wrapper: Changing the key forces React to replay the slide animation */}
+            <div key={mediaType} className="animate-slide-in-right">
+              
+              {/* Only show Top Rated if there is NO search term */}
+              {!searchTerm && (
+                <section className='trending'>
+                  <h2>Top Rated {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
+                  {isTopRatedLoading ? (
+                    <Spinner />
+                  ) : (
+                    <ul>
+                      {topRatedMovies.map((movie, index) => (
+                        // {/* NEW CHANGE: Made the Top Rated posters clickable to open the DetailPage */}
+                        <li 
+                          key={movie.id}
+                          className="cursor-pointer hover:scale-105 transition-transform"
+                          onClick={() => setSelectedItem(movie)}
+                        > 
+                          <p>{index + 1}</p>
+                          <img 
+                            src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} 
+                            alt={movie.title || movie.name} 
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
               )}
-            </section>
-          )}
 
-          <section className='all-movies'>
-            <h2>All {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
-            {isLoading ? (
-              <Spinner />
-            ) : errorMessage ? (
-              <p className="text-red-500">{errorMessage}</p>
-            ) : (
-              <ul>
-                {movieList.map((movie) => (
-                 <MovieCard key={movie.id} movie={movie} />
-                ))}
-              </ul>
-            )}
-          </section>
+              <section className='all-movies'>
+                <h2>All {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
+                {isLoading ? (
+                  <Spinner />
+                ) : errorMessage ? (
+                  <p className="text-red-500">{errorMessage}</p>
+                ) : (
+                  <ul>
+                    {movieList.map((movie) => (
+                    //  {/* NEW CHANGE: Passed onClick prop down to your MovieCard */}
+                     <MovieCard key={movie.id} movie={movie} onCardselect={setSelectedItem} />
+                    ))}
+                  </ul>
+                )}
+              </section>
 
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </main>
   )

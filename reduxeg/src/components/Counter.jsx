@@ -1,5 +1,5 @@
 import { useSelector,useDispatch} from "react-redux";
-import {increment,decrement,incrementByAmount} from "../state/counter/counterSlice";
+import {increment,decrement,incrementByAmount,incrementAsync} from "../state/counter/counterSlice";
 
 const Counter=()=>{
 
@@ -15,6 +15,7 @@ const Counter=()=>{
                 <button onClick={() => dispatch(increment())}>Increment</button>
                 <button onClick={() => dispatch(decrement())}>Decrement</button>
                 <button onClick={() => dispatch(incrementByAmount(5))}>Increment by 5</button>
+                <button onClick={() => dispatch(incrementAsync(10))}>Increment Async by 10</button>
             </div>
         </div>
     )
