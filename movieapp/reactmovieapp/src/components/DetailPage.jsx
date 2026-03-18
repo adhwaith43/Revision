@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 
 // 1. Import Redux dispatch and your new actions
 import { useDispatch } from 'react-redux';
@@ -8,6 +9,18 @@ import { deleteMovie, updateMovie } from '../store/movieSlice';
 const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
   const displayTitle = item.title || item.name;
   const displayDate = item.release_date || item.first_air_date;;
+
+  ////// a. THE EDIT TOGGLE //////
+  const [isEditing, setIsEditing] = useState(false);
+
+  ///////////// b. THE FORM DATA   ///////////
+  // We initialize this with the current movie's data so the inputs aren't empty /////////
+  const [formData, setFormData] = useState({
+    title: displayTitle,
+    original_language: item.original_language || '',
+    release_date: displayDate || '',
+    overview: item.overview || '',
+  });
   
   // 3. Initialize dispatch
   const dispatch = useDispatch();
@@ -21,22 +34,63 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
         }
     };
 
-  // 5. The Edit Function
-  const handleEdit = () => {
-        const newTitle = window.prompt("Enter a new title for this item:", displayTitle);
+    /////////old edit function//////////
+//   // 5. The Edit Function
+//   const handleEdit = () => {
+//         const newTitle = window.prompt("Enter a new title for this item:", displayTitle);
         
-        if (newTitle && newTitle !== displayTitle) {
-        // Make a copy of the current item so we don't directly mutate React state
-        const updatedItem = { ...item };
+//         if (newTitle && newTitle !== displayTitle) {
+//         // Make a copy of the current item so we don't directly mutate React state
+//         const updatedItem = { ...item };
         
-        // TMDB uses 'title' for movies and 'name' for TV, so we update the correct one
-        if (item.title !== undefined) updatedItem.title = newTitle;
-        else updatedItem.name = newTitle;
+//         // TMDB uses 'title' for movies and 'name' for TV, so we update the correct one
+//         if (item.title !== undefined) updatedItem.title = newTitle;
+//         else updatedItem.name = newTitle;
 
-        dispatch(updateMovie(updatedItem)); // Tell Redux to update the main list
-        onUpdate(updatedItem); // Tell App.jsx to update the Detail Page view
-        }
+//         dispatch(updateMovie(updatedItem)); // Tell Redux to update the main list
+//         onUpdate(updatedItem); // Tell App.jsx to update the Detail Page view
+//         }
+//     };
+    /////////////////////////////////////////////
+
+
+    // Updates the local formData as the user types
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    // Saves to Redux and closes Edit Mode
+    const handleSave = () => {
+        // Merge the old item data with the new typed data
+        const updatedItem = {
+        ...item,
+        original_language: formData.original_language,
+        overview: formData.overview,
+        };
+        
+        // TMDB relies on specific keys for movies vs tv shows, so we map them back correctly
+        if (item.title !== undefined) updatedItem.title = formData.title;
+        else updatedItem.name = formData.title;
+        
+        if (item.release_date !== undefined) updatedItem.release_date = formData.release_date;
+        else updatedItem.first_air_date = formData.release_date;
+
+        dispatch(updateMovie(updatedItem)); // 1. Save to Global Vault
+        onUpdate(updatedItem);              // 2. Update App.jsx's selectedItem
+        setIsEditing(false);                // 3. Turn off Edit Mode
+    };
+
+    const handleCancel = () => {
+        // Reset the form back to the original data and close Edit Mode
+        setFormData({
+        title: displayTitle,
+        original_language: item.original_language || '',
+        release_date: displayDate || '',
+        overview: item.overview || '',
+        });
+        setIsEditing(false);
+    };
+
 
 
 
@@ -67,6 +121,43 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
 
         {/* Right Side: Details & Action Buttons */}
         <div className="w-full md:w-2/3 flex flex-col z-10">
+
+        {isEditing ? (
+            /* --- EDIT MODE UI --- */
+            <div className="flex flex-col gap-4 mb-8 flex-grow">
+              <input 
+                name="title"
+                value={formData.title} 
+                onChange={handleChange}
+                className="text-4xl sm:text-5xl font-bold bg-dark-100/50 border border-light-100/20 rounded-lg p-2 text-white focus:outline-none focus:border-blue-500 w-full"
+              />
+              <div className="flex gap-4">
+                <input 
+                  name="original_language"
+                  value={formData.original_language} 
+                  onChange={handleChange}
+                  placeholder="Language (e.g., en)"
+                  className="bg-dark-100/50 border border-light-100/20 rounded-lg p-2 text-white focus:outline-none focus:border-blue-500 w-24"
+                />
+                <input 
+                  name="release_date"
+                  value={formData.release_date} 
+                  onChange={handleChange}
+                  placeholder="YYYY-MM-DD"
+                  className="bg-dark-100/50 border border-light-100/20 rounded-lg p-2 text-white focus:outline-none focus:border-blue-500 w-36"
+                />
+              </div>
+              <textarea 
+                name="overview"
+                value={formData.overview} 
+                onChange={handleChange}
+                rows="5"
+                className="bg-dark-100/50 border border-light-100/20 rounded-lg p-3 text-white text-lg leading-relaxed focus:outline-none focus:border-blue-500 w-full resize-none"
+              />
+            </div>
+          ) : (
+            /* --- NORMAL DISPLAY UI --- */
+        <>
           <h2 className="text-4xl sm:text-5xl font-bold mb-2">{displayTitle}</h2>
           
           <div className="flex flex-wrap items-center gap-4 text-gray-100 mb-6">
@@ -82,9 +173,27 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
           <p className="text-gray-100 text-lg leading-relaxed mb-8 flex-grow">
             {item.overview || "No description available for this title."}
           </p>
-
+          </>
+          )
+        }
+             
           {/* Action Buttons: Favorite, Edit, Delete */}
           <div className="flex flex-wrap gap-4 mt-auto">
+
+            {isEditing ? (
+              /* If Editing, show Save and Cancel buttons */
+              <>
+                <button onClick={handleSave} className="px-6 py-3 bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 rounded-xl font-semibold transition-all duration-300">
+                  Save Changes
+                </button>
+                <button onClick={handleCancel} className="px-6 py-3 bg-light-100/5 hover:bg-light-100/20 text-gray-100 rounded-xl font-semibold transition-all duration-300">
+                  Cancel
+                </button>
+              </>
+            ) : (
+              /* If Not Editing, show Favorite, Edit, Delete */
+
+              <>
             
             {/* Favorite Button (Red on hover) */}
             <button className="flex items-center gap-2 px-6 py-3 bg-light-100/5 hover:bg-rose-500/20 hover:text-rose-400 rounded-xl transition-all duration-300 group">
@@ -95,7 +204,7 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
             </button>
 
             {/* Edit Button (Blue on hover) */}
-            <button className="flex items-center gap-2 px-6 py-3 bg-light-100/5 hover:bg-blue-500/20 hover:text-blue-400 rounded-xl transition-all duration-300 group" onClick={handleEdit}>
+            <button className="flex items-center gap-2 px-6 py-3 bg-light-100/5 hover:bg-blue-500/20 hover:text-blue-400 rounded-xl transition-all duration-300 group" onClick={() => setIsEditing(true)}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 group-hover:scale-110 transition-transform">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
               </svg>
@@ -109,7 +218,8 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
               </svg>
               <span className="font-semibold">Delete</span>
             </button>
-
+           </>
+            )}
           </div>
         </div>
       </div>

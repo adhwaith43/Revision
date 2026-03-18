@@ -12,9 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/*  Provider */}
     <Provider store={store}>
-      <BrowserRouter>
+      {/* <BrowserRouter> */}
         <App />
-      </BrowserRouter>
+      {/* </BrowserRouter> */}
     </Provider>
   </React.StrictMode>,
 )

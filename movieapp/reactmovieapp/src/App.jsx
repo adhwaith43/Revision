@@ -4,8 +4,7 @@ import { useEffect } from 'react';
 import {useDebounce} from 'react-use';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setReduxMovieList } from './store/movieSlice';
-
+import { setReduxMovieList, setReduxTopRatedMovies } from './store/movieSlice';
 
 import './App.css'
 import DetailPage from './components/DetailPage';
@@ -32,7 +31,8 @@ function App() {
   const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
 
   //top rated ..list and loading state
-  const [topRatedMovies, setTopRatedMovies] = useState([]);
+const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
+
   const [isTopRatedLoading, setIsTopRatedLoading] = useState(true);
 
   
@@ -141,12 +141,15 @@ function App() {
           setErrorMessage(movies.Error || 'No movies found.'); ///someimes the API might return a response with an error message
           //, so we check for that and set it as the error message if it exists. Otherwise, we set a generic error message.
 
-          setTopRatedMovies([]); /// Clear the movie list if there was an error fetching movies
-          return;
+          // setTopRatedMovies([]); /// Clear the movie list if there was an error fetching movies
+          // return;
+        dispatch(setReduxTopRatedMovies([])); // NEW REDUX WAY
+        return;
          }
 
-         setTopRatedMovies(movies.results); /// if no error , update the movie list
-     }
+        //  setTopRatedMovies(movies.results); /// if no error , update the movie list
+        dispatch(setReduxTopRatedMovies(movies.results)); // NEW REDUX WAY
+      }
 
       catch (error) {
         console.error('Error fetching movies:', error);
