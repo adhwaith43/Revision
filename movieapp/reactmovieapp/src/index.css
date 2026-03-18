@@ -22,6 +22,21 @@
   --background-image-hero-pattern: url("/hero-bg.png");
 }
 
+/* for theme change */
+
+.theme-tv {
+  --color-primary: #170202; 
+  --color-light-100: #fbcECE; 
+  --color-light-200: #dbA8A8; 
+  --color-dark-100: #260A0A; 
+  --background-image-hero-pattern: url("/hero-bg-tv.png");
+}
+
+.theme-tv .text-gradient {
+  @apply bg-linear-to-r from-[#ffcfcf] to-[#ff5c5c] bg-clip-text text-transparent;
+}
+
+
 @layer base {
   body {
     font-family: "DM Sans", serif;
@@ -187,20 +202,6 @@
   &::-webkit-scrollbar-thumb {
     @apply bg-light-200/20 rounded-full hover:bg-light-200/40 transition-colors;
   }
-}
-
-/* for theme change */
-
-.theme-tv {
-  --color-primary: #170202; 
-  --color-light-100: #fbcECE; 
-  --color-light-200: #dbA8A8; 
-  --color-dark-100: #260A0A; 
-  --background-image-hero-pattern: url("/hero-bg-tv.png");
-}
-
-.theme-tv .text-gradient {
-  @apply bg-linear-to-r from-[#ffcfcf] to-[#ff5c5c] bg-clip-text text-transparent;
 }
 
 /* Add this at the VERY BOTTOM of your App.css file */
