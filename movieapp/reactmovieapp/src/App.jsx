@@ -103,7 +103,7 @@ function App() {
 
         //  setMovieList(data.results); /// if no error , update the movie list
         dispatch(setReduxMovieList(data.results)); // NEW REDUX WAY
-        
+
      }
 
       catch (error) {
@@ -195,7 +195,8 @@ function App() {
           <DetailPage 
             item={selectedItem} 
             mediaType={mediaType} 
-            onBack={() => setSelectedItem(null)} 
+            onBack={() => setSelectedItem(null)}
+            onUpdate={setSelectedItem} /* NEW: This allows the DetailPage to update the local state when edited! */ 
           />
         ) : (
           <> {/* NEW CHANGE: React fragment wraps your original UI so it can exist inside the "else" part of the logic gate */}
