@@ -5,7 +5,9 @@ const movieSlice = createSlice({
   initialState: {
     movieList: [], // starting state
     topRatedMovies: [], // Added Top Rated to the vault
+    favorites: [], // array to hold our favorite movies
   },
+
   reducers: {
 
      ///similar to usestate
@@ -24,7 +26,12 @@ const movieSlice = createSlice({
       // Filter the movie out of BOTH lists
       // action.payload will be the ID of the movie we want to delete
       state.movieList = state.movieList.filter(movie => movie.id !== action.payload);
+
+      // Also remove from favorites if it gets deleted!
       state.topRatedMovies = state.topRatedMovies.filter(movie => movie.id !== action.payload);
+
+      // Also remove from favorites if it gets deleted!
+      state.favorites = state.favorites.filter(movie => movie.id !== action.payload);
     },
 
 
@@ -52,11 +59,31 @@ const movieSlice = createSlice({
       if (topIndex !== -1) {
         state.topRatedMovies[topIndex] = updatedItem; 
       }
-    }
 
-  }
+      // 3. Also update the title in the favorites list if it was edited!
+      const favIndex = state.favorites.findIndex(movie => movie.id === updatedItem.id);
+      if (favIndex !== -1) state.favorites[favIndex] = updatedItem;
+    },
+
+    // NEW: The Favorite Toggle Logic
+    toggleFavorite: (state, action) => {
+      const movie = action.payload; // The movie we clicked
+      
+      // Check if it already exists in the favorites array
+      const isFavorited = state.favorites.some(m => m.id === movie.id);
+      
+      if (isFavorited) {
+        // If it's there, remove it
+        state.favorites = state.favorites.filter(m => m.id !== movie.id); 
+      } else {
+        // If it's not there, add it
+        state.favorites.push(movie); 
+      }
+    }
+    
+  },
 });
 
 
-export const { setReduxMovieList, setReduxTopRatedMovies, deleteMovie, updateMovie } = movieSlice.actions;
+export const { setReduxMovieList, setReduxTopRatedMovies, deleteMovie, updateMovie, toggleFavorite } = movieSlice.actions;
 export default movieSlice.reducer;

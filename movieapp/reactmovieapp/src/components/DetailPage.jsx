@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 
 
 // 1. Import Redux dispatch and your new actions
-import { useDispatch } from 'react-redux';
-import { deleteMovie, updateMovie } from '../store/movieSlice';
+// Add useSelector to read the vault, and toggleFavorite to update it
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteMovie, updateMovie ,toggleFavorite} from '../store/movieSlice';
 
 // 2. Add 'onUpdate' to your destructured props so we can tell App.jsx the item changed
 const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
@@ -24,6 +25,12 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
   
   // 3. Initialize dispatch
   const dispatch = useDispatch();
+
+  // Read the favorites list from Redux
+  const favorites = useSelector(state => state.movies.favorites);
+  
+  // Is this specific movie inside that list? (Returns true or false)
+  const isFavorited = favorites.some(fav => fav.id === item.id);
 
   // 4. The Delete Function
   const handleDelete = () => {
@@ -195,12 +202,15 @@ const DetailPage = ({ item, mediaType, onBack, onUpdate }) => {
 
               <>
             
-            {/* Favorite Button (Red on hover) */}
-            <button className="flex items-center gap-2 px-6 py-3 bg-light-100/5 hover:bg-rose-500/20 hover:text-rose-400 rounded-xl transition-all duration-300 group">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 group-hover:scale-110 transition-transform">
+            {/* Dynamic Favorite Button */}
+            <button 
+              onClick={() => dispatch(toggleFavorite(item))}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 group ${isFavorited ? 'bg-rose-500/20 text-rose-400' : 'bg-light-100/5 hover:bg-rose-500/20 hover:text-rose-400'}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 group-hover:scale-110 transition-transform">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
-              <span className="font-semibold">Favorite</span>
+              <span className="font-semibold">{isFavorited ? 'Favorited' : 'Favorite'}</span>
             </button>
 
             {/* Edit Button (Blue on hover) */}

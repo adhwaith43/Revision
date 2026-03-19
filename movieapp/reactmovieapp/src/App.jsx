@@ -29,16 +29,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(true); /// state to track loading status of the API request
 
   const [debouncedSearchTerm ,setDebouncedSearchTerm] = useState(''); ///debounced search term to prevent excessive API calls while the user is typing
-
-  //top rated ..list and loading state
-const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
-
-  const [isTopRatedLoading, setIsTopRatedLoading] = useState(true);
-
   
-
  // NEW: State to track if we are looking at movies or tv
   const [mediaType, setMediaType] = useState('movie');
+
+  //top rated ..list and loading state
+  const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
+
+  const [showFavorites, setShowFavorites] = useState(false); ///variable to track whether we are showing favorites or not
+  
+  const favorites = useSelector((state) => state.movies.favorites); // NEW
+
+  // NEW: Filter favorites based on the current toggle!
+  const displayedFavorites = favorites.filter(fav => 
+    mediaType === 'movie' ? fav.title !== undefined : fav.name !== undefined
+  );
+
+
+  const [isTopRatedLoading, setIsTopRatedLoading] = useState(true);
 
 
 // Tracks the clicked movie/tv show //
@@ -192,16 +200,64 @@ const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
 
       {/* NEW CHANGE: Added relative positioning and z-index so content sits above the new background */}
       <div className='wrapper relative z-10 pt-10'>
+
+        {/* NEW: Top Right Favorites Icon */}
+        <button 
+          onClick={() => {
+            setShowFavorites(!showFavorites); // Toggle the page on/off
+            setSelectedItem(null); // Make sure the detail page closes if it's open
+          }}
+          className={`absolute top-6 right-6 sm:top-10 sm:right-10 z-50 p-3 rounded-full transition-all duration-300 shadow-lg ${showFavorites ? 'bg-rose-500 text-white shadow-rose-500/30' : 'bg-dark-100/80 text-gray-100 hover:text-rose-400 hover:bg-dark-100'}`}
+          title="My Favorites"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill={showFavorites ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+          </svg>
+        </button>
         
-        {/* NEW CHANGE: THE LOGIC GATE! If selectedItem is true, show DetailPage. If false, show the rest of the app */}
+
+
+        {/* THE NEW 3-WAY LOGIC GATE */}
         {selectedItem ? (
+          
+          /* VIEW 1: Detail Page */
           <DetailPage 
             item={selectedItem} 
             mediaType={mediaType} 
             onBack={() => setSelectedItem(null)}
             onUpdate={setSelectedItem} /* NEW: This allows the DetailPage to update the local state when edited! */ 
           />
+          
+        ) : showFavorites ? (
+          
+          /* VIEW 2: The Dedicated Favorites Page */
+          <div className="animate-delayed-fade mt-10">
+            <h2 className="text-3xl font-bold text-white mb-8">
+              My Favorite {mediaType === 'movie' ? 'Movies' : 'TV Shows'}
+            </h2>
+            
+            {displayedFavorites.length > 0 ? (
+              <section className="all-movies !mt-0">
+                <ul>
+                  {displayedFavorites.map((movie) => (
+                    <MovieCard key={movie.id} movie={movie} onCardselect={setSelectedItem} />
+                  ))}
+                </ul>
+              </section>
+            ) : (
+              <div className="text-center py-20 bg-dark-100/30 rounded-3xl border border-light-100/5">
+                <p className="text-gray-100 text-xl">You haven't added any favorite {mediaType === 'movie' ? 'movies' : 'TV shows'} yet.</p>
+                <button onClick={() => setShowFavorites(false)} className="mt-6 text-blue-400 hover:text-blue-300 font-semibold underline">
+                  Go find some!
+                </button>
+              </div>
+            )}
+          </div>
+
         ) : (
+
+          /* VIEW 3: The Normal Home Page */
+
           <> {/* NEW CHANGE: React fragment wraps your original UI so it can exist inside the "else" part of the logic gate */}
             <header>
 
@@ -240,6 +296,7 @@ const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
 
             </header>
 
+
             {/* The Animated Wrapper: Changing the key forces React to replay the slide animation */}
             <div key={mediaType} className="animate-slide-in-right">
               
@@ -270,6 +327,7 @@ const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
                 </section>
               )}
 
+
               <section className='all-movies'>
                 <h2>All {mediaType === 'movie' ? 'Movies' : 'TV Shows'}</h2>
                 {isLoading ? (
@@ -285,6 +343,7 @@ const topRatedMovies = useSelector((state) => state.movies.topRatedMovies);
                   </ul>
                 )}
               </section>
+
 
             </div>
           </>
